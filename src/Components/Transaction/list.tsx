@@ -1,5 +1,6 @@
 import React from "react"
 import { FlatList } from "react-native"
+import { connect } from "react-redux"
 
 import { ListSeparator } from "./components"
 
@@ -16,17 +17,25 @@ interface Props {
   search: (searchType: SearchType, searchValue: string) => void
 }
 
-export default function(props: Props) {
-  return (
-    <FlatList
-      height="100%"
-      width="100%"
-      data={props.transactions}
-      keyExtractor={t => `${t.value}-${t.timeStamp}`}
-      renderItem={({ item }) => (
-        <TransactionItem search={props.search} transaction={item} />
-      )}
-      ItemSeparatorComponent={() => <ListSeparator />}
-    />
-  )
+class TransactionsList extends React.Component<Props, any> {
+  render() {
+    return (
+      <FlatList
+        height="100%"
+        width="100%"
+        data={this.props.transactions}
+        keyExtractor={t => `${t.value}-${t.timeStamp}`}
+        renderItem={({ item }) => (
+          <TransactionItem search={this.props.search} transaction={item} />
+        )}
+        ItemSeparatorComponent={() => <ListSeparator />}
+      />
+    )
+  }
 }
+
+const mapStateToProps = (state: any, ownProps: any) => ({
+  transactions: state.entities.transactions || []
+})
+
+export default connect(mapStateToProps)(TransactionsList)

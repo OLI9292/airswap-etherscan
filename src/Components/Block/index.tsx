@@ -1,4 +1,5 @@
 import React from "react"
+import { connect } from "react-redux"
 import { TouchableHighlight, View } from "react-native"
 
 import Text from "../Common/text"
@@ -11,7 +12,7 @@ interface Props {
   search: (searchType: SearchType, searchValue: string) => void
 }
 
-export default class BlockComponent extends React.Component<Props, any> {
+class BlockComponent extends React.Component<Props, any> {
   constructor(props: Props) {
     super(props)
     this.state = {}
@@ -27,3 +28,9 @@ export default class BlockComponent extends React.Component<Props, any> {
     )
   }
 }
+
+const mapStateToProps = (state: any, ownProps: any) => ({
+  block: state.entities.block || []
+})
+
+export default connect(mapStateToProps)(BlockComponent)
