@@ -1,9 +1,14 @@
 import React from "react"
+import { connect } from "react-redux"
 import { TouchableHighlight, View } from "react-native"
 
-import { SearchType } from "../Home/index"
 import { Box } from "./components"
 import Text from "../Common/text"
+import {
+  fetchNormalTransactionsAction,
+  fetchBlockAction,
+  loadQuery
+} from "../../Actions/index"
 import {
   NormalTransaction,
   ERC20Transaction
@@ -12,18 +17,27 @@ import { convertValueToEth } from "../../Lib/helpers"
 import palette from "../../Lib/palette"
 
 interface Props {
+  dispatch: any
   transaction: NormalTransaction | ERC20Transaction
-  search: (searchType: SearchType, searchValue: string) => void
+  navigation: any
 }
 
 interface State {
   expanded?: boolean
 }
 
-export default class Item extends React.Component<Props, State> {
+class Item extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {}
+  }
+
+  private navigate(value: string, screen: string) {
+    this.props.dispatch(loadQuery(value))
+    const fn =
+      screen === "Block" ? fetchBlockAction : fetchNormalTransactionsAction
+    this.props.dispatch(fn(value))
+    this.props.navigation.navigate(screen)
   }
 
   render() {
@@ -33,7 +47,7 @@ export default class Item extends React.Component<Props, State> {
     const tappableAddress = (
       <TouchableHighlight
         underlayColor={palette.transparent}
-        onPress={() => this.props.search(SearchType.NormalTransactions, to)}
+        onPress={() => this.navigate(to, "Address")}
       >
         <Text.regular>{to}</Text.regular>
       </TouchableHighlight>
@@ -42,7 +56,7 @@ export default class Item extends React.Component<Props, State> {
     const tappableBlock = (
       <TouchableHighlight
         underlayColor={palette.transparent}
-        onPress={() => this.props.search(SearchType.Block, String(blockNumber))}
+        onPress={() => this.navigate(String(blockNumber), "Block")}
       >
         <Text.regular>{blockNumber}</Text.regular>
       </TouchableHighlight>
@@ -70,3 +84,5 @@ export default class Item extends React.Component<Props, State> {
     )
   }
 }
+
+export default connect()(Item)

@@ -18,10 +18,9 @@ const callApi = (
       if (!response.ok) {
         return Promise.reject(json)
       }
-      const result: any = {}
-      result[schema] = Array.isArray(json.result)
-        ? json.result.slice(0, 10)
-        : json.result
+      const result: any = { isLoading: false }
+      result[schema] = Array.isArray(json.result) ? json.result : json.result
+      console.log(result[schema].length)
       return result
     })
   })

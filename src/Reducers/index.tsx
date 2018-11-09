@@ -1,13 +1,14 @@
 import * as ActionTypes from "../Actions"
 import { combineReducers } from "redux"
-import merge from "lodash/merge"
+
+import { _mergeWith } from "../Lib/helpers"
 
 // Updates an entity cache in response to any action.
 const entities = (state = {}, action: any) => {
-  const response = action.response
+  const { response } = action
 
   if (response) {
-    return merge({}, state, response)
+    return _mergeWith(state, response)
   }
 
   return state
