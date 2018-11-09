@@ -1,13 +1,22 @@
 import React from "react"
-import { View } from "react-native"
+import { connect } from "react-redux"
+import { ActivityIndicator, View } from "react-native"
 
-import { SearchType } from "../Home/index"
+import Search from "../Search"
+import Chart from "../Chart"
+import Text from "../Common/text"
 import Navigation from "./navigation"
 import TransactionsList from "../Transaction/list"
 
 import {
+  NormalTransaction,
+  ERC20Transaction
+} from "../../Interfaces/transaction"
+
+import {
   fetchNormalTransactionsAction,
-  fetchERC20TransactionsAction
+  fetchERC20TransactionsAction,
+  loadQuery
 } from "../../Actions/index"
 
 export enum AddressView {
@@ -17,15 +26,19 @@ export enum AddressView {
 }
 
 interface Props {
-  search: (searchType: SearchType, searchValue: string) => void
   address?: string
+  navigation: any
+  transactions: (NormalTransaction | ERC20Transaction)[]
+  isLoading: boolean
+  dispatch: any
+  query?: string
 }
 
 interface State {
   isViewing: AddressView
 }
 
-export default class AddressComponent extends React.Component<Props, any> {
+class Address extends React.Component<Props, any> {
   constructor(props: Props) {
     super(props)
 
@@ -34,30 +47,56 @@ export default class AddressComponent extends React.Component<Props, any> {
     }
   }
 
+  componentDidMount() {}
+
   public setIsViewing(isViewing: AddressView) {
-    // const address = this.props.address
-    // let searchType: SearchType | undefined
-    // if (isViewing === AddressView.Transactions) {
-    //   searchType = SearchType.NormalTransactions
-    //   await this.props.dispatch(fn(address))
-    // } else if (isViewing === AddressView.ERC20) {
-    //   searchType = SearchType.ERC20Transactions
-    // }
-    // if (searchType !== undefined && address) {
-    //   this.props.search(searchType, address)
-    // }
-    // this.setState({ isViewing })
+    this.setState({ isViewing })
+    const { query } = this.props
+    if (!query) return
+
+    this.props.dispatch(loadQuery(query))
+
+    if (isViewing === AddressView.ERC20) {
+      this.props.dispatch(fetchERC20TransactionsAction(query))
+    } else {
+      this.props.dispatch(fetchNormalTransactionsAction(query))
+    }
   }
 
   render() {
+    const { isLoading, navigation, transactions } = this.props
+    const { isViewing } = this.state
+
+    const overView = (
+      <View>
+        <Text.regular>{transactions.length} transactions</Text.regular>
+        <Chart data={transactions} />
+      </View>
+    )
+
     return (
       <View>
+        <Search navigation={navigation} />
         <Navigation
-          isViewing={this.state.isViewing}
+          isViewing={isViewing}
           setIsViewing={this.setIsViewing.bind(this)}
         />
-        <TransactionsList search={this.props.search.bind(this)} />
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : isViewing === AddressView.Overview ? (
+          overView
+        ) : (
+          <TransactionsList navigation={navigation} />
+        )}
       </View>
     )
   }
 }
+
+const mapStateToProps = (state: any, ownProps: any) => ({
+  isLoading: state.entities.isLoading,
+  transactions: state.entities.transactions || [],
+  query: state.entities.query
+})
+
+export default connect(mapStateToProps)(Address)

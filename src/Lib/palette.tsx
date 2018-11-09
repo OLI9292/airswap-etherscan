@@ -1,7 +1,7 @@
 export default {
   gray: {
     primary: "#323337",
-    light: "#6D6E71"
+    light: "#E9E9EB"
   },
   transparent: "#00FFFF00"
 }

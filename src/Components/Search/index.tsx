@@ -1,67 +1,85 @@
 import React from "react"
+import { StyleSheet } from "react-native"
 import { connect } from "react-redux"
 import { SearchBar } from "react-native-elements"
 
 import {
   fetchNormalTransactionsAction,
   fetchBlockAction,
-  fetchERC20TransactionsAction
+  loadQuery
 } from "../../Actions/index"
 
-export enum SearchType {
-  NormalTransactions,
-  ERC20Transactions,
-  Block
-}
+import styles from "./styles"
 
 interface Props {
   dispatch: any
+  navigation: any
+  query?: string
 }
 
 interface State {
   searchValue?: string
-  isLoading?: boolean
 }
+
+const ADDRESS = "0x75fe0f54c65ca39c23d82eb1bada90e4af99a39e"
+const BLOCK = "2165403"
 
 class Search extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    console.log("hi")
     this.state = {}
   }
 
-  private async search(searchType: SearchType, searchValue: string) {
-    // this.setState({ searchValue, isLoading: true, searchType })
-    // if (searchType === SearchType.Block) {
-    //   await this.props.dispatch(fetchBlockAction(searchValue))
-    // } else {
-    //   const address = searchValue
-    //   const fn =
-    //     searchType === SearchType.NormalTransactions
-    //       ? fetchNormalTransactionsAction
-    //       : fetchERC20TransactionsAction
-    //   console.log(fn)
-    //   await this.props.dispatch(fn(address))
-    //   this.setState({ address })
-    // }
-    // this.setState({ isLoading: false })
+  public componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.query) {
+      this.setState({ searchValue: nextProps.query })
+    }
+  }
+
+  private async search(
+    searchValue: string = "0xddBd2B932c763bA5b1b7AE3B362eac3e8d40121A"
+  ) {
+    if (!searchValue) return
+    const isSearchingBlock = searchValue.length < 20
+    this.props.dispatch(loadQuery(searchValue))
+
+    if (isSearchingBlock) {
+      await this.props.dispatch(fetchBlockAction(searchValue))
+      // this.props.navigation.navigate("Block")
+    } else {
+      await this.props.dispatch(fetchNormalTransactionsAction(searchValue))
+      // this.props.navigation.navigate("Address")
+    }
   }
 
   render() {
-    const { searchValue, isLoading } = this.state
-
     return (
       <SearchBar
+        containerStyle={styles.container}
+        inputStyle={styles.input}
+        searchIcon={{
+          type: "Material Design Icons",
+          color: "#86939e",
+          name: "search"
+        }}
+        platform="ios"
+        leftIconContainerStyle={styles.input}
+        inputContainerStyle={styles.inputContainer}
         autoCorrect={false}
         lightTheme
-        value={searchValue || ""}
+        value={this.state.searchValue || this.props.query}
         returnKeyType="search"
-        onChangeText={e => this.setState({ searchValue: e })}
-        onSubmitEditing={() => console.log("hi")}
+        onChangeText={searchValue => this.setState({ searchValue })}
+        onSubmitEditing={() => this.search(this.state.searchValue)}
         placeholder="Search Blocks, Addresses"
       />
     )
   }
 }
 
-export default connect()(Search)
+const mapStateToProps = (state: any, ownProps: any) => ({
+  isLoading: state.entities.isLoading,
+  query: state.entities.query
+})
+
+export default connect(mapStateToProps)(Search)

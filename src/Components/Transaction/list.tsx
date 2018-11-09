@@ -1,10 +1,10 @@
 import React from "react"
 import { FlatList } from "react-native"
 import { connect } from "react-redux"
+import merge from "lodash/merge"
 
 import { ListSeparator } from "./components"
 
-import { SearchType } from "../Home/index"
 import TransactionItem from "../Transaction/item"
 
 import {
@@ -13,8 +13,8 @@ import {
 } from "../../Interfaces/transaction"
 
 interface Props {
+  navigation: any
   transactions: (NormalTransaction | ERC20Transaction)[]
-  search: (searchType: SearchType, searchValue: string) => void
 }
 
 class TransactionsList extends React.Component<Props, any> {
@@ -23,10 +23,13 @@ class TransactionsList extends React.Component<Props, any> {
       <FlatList
         height="100%"
         width="100%"
-        data={this.props.transactions}
-        keyExtractor={t => `${t.value}-${t.timeStamp}`}
+        data={this.props.transactions.map((t, idx) => merge({}, t, { idx }))}
+        keyExtractor={t => String(t.idx)}
         renderItem={({ item }) => (
-          <TransactionItem search={this.props.search} transaction={item} />
+          <TransactionItem
+            navigation={this.props.navigation}
+            transaction={item}
+          />
         )}
         ItemSeparatorComponent={() => <ListSeparator />}
       />

@@ -39,7 +39,7 @@ const NORMAL_TRANSACTIONS_FAILURE = "NORMAL_TRANSACTIONS_FAILURE"
 
 export const fetchNormalTransactions = (address: string, sort: string) => ({
   [CALL_API]: {
-    endpoint: `?module=account&action=txlist&address=${address}&sort=${sort}&apikey=${API_KEY}`,
+    endpoint: `?module=account&action=txlist&address=${address}&sort=${sort}&apikey=${API_KEY}&page=1&offset=100`,
     method: "GET",
     types: [
       NORMAL_TRANSACTIONS_REQUEST,
@@ -72,4 +72,11 @@ export const RESET_ERROR_MESSAGE = "RESET_ERROR_MESSAGE"
 
 export const resetErrorMessage = () => ({
   type: RESET_ERROR_MESSAGE
+})
+
+export const LOAD_QUERY = "LOAD_QUERY"
+
+export const loadQuery = (query: string) => ({
+  type: LOAD_QUERY,
+  response: { query, isLoading: true }
 })
