@@ -2,7 +2,7 @@
 
 ## About
 
-![screenshots](https://github.com/OLI9292/airswap-etherscan/tree/master/src/Lib/Images/readMeImage.jpeg)
+![screenshots](https://github.com/OLI9292/airswap-etherscan/blob/master/src/Lib/Images/readMeImage.jpeg)
 
 ## Setup
 
@@ -30,8 +30,8 @@ To test the app on your iPhone, install Expo on your device and use the QR code 
 
 ## Technologies
 
-- (Typescript)[https://www.typescriptlang.org/] - language
-- (React Native)[https://facebook.github.io/react-native/] - views
-- (Expo)[https://expo.io/] - tooling
-- (Redux)[https://redux.js.org/] - state management
-- (Styled Components)[https://www.styled-components.com/] - styles
+- [Typescript](https://www.typescriptlang.org/) - language
+- [React Native](https://facebook.github.io/react-native/) - views
+- [Expo](https://expo.io/) - tooling
+- [Redux](https://redux.js.org/) - state management
+- [Styled Components](https://www.styled-components.com/) - styles
