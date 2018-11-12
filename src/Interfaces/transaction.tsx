@@ -11,7 +11,7 @@ export interface ERC20Transaction {
   hash: string
   input: string
   nonce: number
-  timeStamp: number
+  timeStamp: string
   to: string
   tokenDecimal: number
   tokenName: string
@@ -22,7 +22,7 @@ export interface ERC20Transaction {
 
 export interface NormalTransaction {
   blockNumber: number
-  timeStamp: number
+  timeStamp: string
   hash: string
   nonce: number
   blockHash: string

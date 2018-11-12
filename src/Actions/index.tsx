@@ -6,7 +6,7 @@ const API_KEY = CONFIG.ETHERSCAN_API_KEY
 
 export const fetchERC20TransactionsAction = (
   address: string,
-  sort: string = "asc"
+  sort: string = "desc"
 ) => (dispatch: any, getState: any) =>
   dispatch(fetchERC20Transactions(address, sort))
 
@@ -29,7 +29,7 @@ export const fetchERC20Transactions = (address: string, sort: string) => ({
 
 export const fetchNormalTransactionsAction = (
   address: string,
-  sort: string = "asc"
+  sort: string = "desc"
 ) => (dispatch: any, getState: any) =>
   dispatch(fetchNormalTransactions(address, sort))
 
@@ -79,4 +79,11 @@ export const LOAD_QUERY = "LOAD_QUERY"
 export const loadQuery = (query: string) => ({
   type: LOAD_QUERY,
   response: { query, isLoading: true }
+})
+
+export const SET_IS_SCANNING = "SET_IS_SCANNING"
+
+export const setIsScanning = (isScanning: boolean) => ({
+  type: SET_IS_SCANNING,
+  response: { isScanning }
 })

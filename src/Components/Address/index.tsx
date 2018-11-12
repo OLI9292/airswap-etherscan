@@ -3,9 +3,9 @@ import { connect } from "react-redux"
 import { ActivityIndicator, View } from "react-native"
 
 import Search from "../Search"
-import Chart from "../Chart"
 import Text from "../Common/text"
 import Navigation from "./navigation"
+import Overview from "./overview"
 import TransactionsList from "../Transaction/list"
 
 import {
@@ -32,6 +32,8 @@ interface Props {
   isLoading: boolean
   dispatch: any
   query?: string
+  error: any
+  isScanning: boolean
 }
 
 interface State {
@@ -41,52 +43,61 @@ interface State {
 class Address extends React.Component<Props, any> {
   constructor(props: Props) {
     super(props)
-
     this.state = {
       isViewing: AddressView.Transactions
     }
   }
 
-  componentDidMount() {}
-
   public setIsViewing(isViewing: AddressView) {
     this.setState({ isViewing })
     const { query } = this.props
     if (!query) return
-
     this.props.dispatch(loadQuery(query))
-
-    if (isViewing === AddressView.ERC20) {
-      this.props.dispatch(fetchERC20TransactionsAction(query))
-    } else {
-      this.props.dispatch(fetchNormalTransactionsAction(query))
-    }
+    const fn =
+      isViewing === AddressView.ERC20
+        ? fetchERC20TransactionsAction
+        : fetchNormalTransactionsAction
+    this.props.dispatch(fn(query))
   }
 
   render() {
-    const { isLoading, navigation, transactions } = this.props
+    const {
+      isLoading,
+      navigation,
+      transactions,
+      error,
+      isScanning
+    } = this.props
+    if (isScanning) return <Search navigation={navigation} />
+
     const { isViewing } = this.state
 
-    const overView = (
-      <View>
-        <Text.regular>{transactions.length} transactions</Text.regular>
-        <Chart data={transactions} />
-      </View>
-    )
+    const addressView =
+      isViewing === AddressView.Overview ? (
+        <Overview />
+      ) : (
+        <TransactionsList navigation={navigation} />
+      )
 
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <Search navigation={navigation} />
+
         <Navigation
           isViewing={isViewing}
           setIsViewing={this.setIsViewing.bind(this)}
         />
+
+        {error && (
+          <Text.error margin="20px" center={true}>
+            {error.message}
+          </Text.error>
+        )}
+
         {isLoading ? (
-          <ActivityIndicator />
-        ) : isViewing === AddressView.Overview ? (
-          overView
+          <ActivityIndicator style={{ marginTop: 20 }} />
         ) : (
-          <TransactionsList navigation={navigation} />
+          addressView
         )}
       </View>
     )
@@ -96,7 +107,9 @@ class Address extends React.Component<Props, any> {
 const mapStateToProps = (state: any, ownProps: any) => ({
   isLoading: state.entities.isLoading,
   transactions: state.entities.transactions || [],
-  query: state.entities.query
+  query: state.entities.query,
+  error: state.errorMessage,
+  isScanning: state.entities.isScanning === true
 })
 
 export default connect(mapStateToProps)(Address)

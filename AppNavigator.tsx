@@ -1,26 +1,18 @@
 import React from "react"
-import { createStackNavigator } from "react-navigation"
+import { createSwitchNavigator } from "react-navigation"
 
+import Home from "./src/Components/Home"
 import Address from "./src/Components/Address"
 import Block from "./src/Components/Block"
-import Home from "./src/Components/Home"
-import Search from "./src/Components/Search"
 
-export default createStackNavigator(
-  {
-    Home: {
-      screen: Home
-    },
-    Address: {
-      screen: Address
-    },
-    Block: {
-      screen: Block
-    }
+export default createSwitchNavigator({
+  Home: {
+    screen: Home
   },
-  {
-    navigationOptions: {
-      headerTitle: <Search />
-    }
+  Address: {
+    screen: Address
+  },
+  Block: {
+    screen: Block
   }
-)
+})

@@ -7,7 +7,7 @@ export interface Uncle {
 export interface Block {
   blockNumber: number
   timeStamp: number
-  blockMine: string
+  blockMiner: string
   blockReward: number
   uncles: Uncle[]
   uncleInclusionReward: number

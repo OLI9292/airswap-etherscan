@@ -18,9 +18,13 @@ const callApi = (
       if (!response.ok) {
         return Promise.reject(json)
       }
+
+      if (json.status == 0) {
+        return Promise.reject(json.message)
+      }
+
       const result: any = { isLoading: false }
-      result[schema] = Array.isArray(json.result) ? json.result : json.result
-      console.log(result[schema].length)
+      result[schema] = json.result
       return result
     })
   })
@@ -69,8 +73,9 @@ export default (store: any) => (next: any) => (action: any) => {
     error =>
       next(
         actionWith({
+          response: { transactions: [], block: undefined },
           type: failureType,
-          error: error.error || "Something bad happened"
+          error: error || "Something bad happened."
         })
       )
   )
