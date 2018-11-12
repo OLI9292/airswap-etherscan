@@ -1,8 +1,8 @@
 import React from "react"
-import { Button, View } from "react-native"
+import { Button } from "react-native"
 
 import { AddressView } from "./"
-import { NavigationBox } from "./components"
+import { ButtonBox, NavigationBox } from "./components"
 import { colors } from "react-native-elements"
 import palette from "../../Lib/palette"
 
@@ -13,17 +13,20 @@ interface Props {
 
 export default class Navigation extends React.Component<Props, any> {
   render() {
-    const { isViewing } = this.props
+    const button = (addressView: AddressView, i: number) => {
+      const color =
+        this.props.isViewing === addressView ? "black" : palette.gray.light
 
-    const button = (addressView: AddressView, i: number) => (
-      <View key={i} style={{ flex: 1 }}>
-        <Button
-          color={isViewing === addressView ? "black" : palette.gray.light}
-          title={String(addressView)}
-          onPress={() => this.props.setIsViewing(addressView)}
-        />
-      </View>
-    )
+      return (
+        <ButtonBox key={i} color={color}>
+          <Button
+            color={color}
+            title={String(addressView)}
+            onPress={() => this.props.setIsViewing(addressView)}
+          />
+        </ButtonBox>
+      )
+    }
 
     return (
       <NavigationBox>

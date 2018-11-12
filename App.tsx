@@ -18,11 +18,12 @@ export default class App extends React.Component<any, State> {
   }
 
   public async componentDidMount() {
-    // Workaround to a tricky issue related to Expo font loading and react-native-elements:
+    // Workaround to a tricky Expo font loading issue
     // - https://github.com/react-native-training/react-native-elements/issues/1005
     await Font.loadAsync({
       "Material Icons": require("@expo/vector-icons/fonts/MaterialIcons.ttf"),
-      "Material Design Icons": require("@expo/vector-icons/fonts/MaterialIcons.ttf")
+      "Material Design Icons": require("@expo/vector-icons/fonts/MaterialIcons.ttf"),
+      Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf")
     })
     this.setState({ fontsAreLoaded: true })
   }
